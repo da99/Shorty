@@ -2,7 +2,7 @@
 Shorty
 ================
 
-A Ruby\_gem.
+A Ruby gem.
 
 Installation
 ------------
@@ -14,7 +14,19 @@ Usage
 
     require "Shorty"
     
-    Shorty
+    include Shorty::DSL
+
+    add :ssh, My_SSH_Commands.new
+    
+    before :ssh, :restart do
+      puts "restarting SSH"
+    end
+
+    after :ssh, :restart do
+      puts "SSH has been restarted"
+    end
+
+    run :ssh, :restart
 
 
 Run Tests
