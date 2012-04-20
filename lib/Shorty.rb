@@ -67,10 +67,6 @@ class Shorty
       result
     end # === def package
 
-    def executable? name
-      `which #{name}`.strip.empty?
-    end
-
   end # === DSL
 
   include DSL
