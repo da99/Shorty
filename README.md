@@ -2,7 +2,7 @@
 Shorty
 ================
 
-A Ruby gem.
+A Ruby gem that provides DSL to add before/after hooks to method calls.
 
 Installation
 ------------
