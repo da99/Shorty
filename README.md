@@ -9,7 +9,7 @@ Installation
 
     gem install Shorty
 
-Usage
+Usage: Ruby
 ------
 
     require "Shorty"
@@ -28,6 +28,26 @@ Usage
 
     run :ssh, :restart
 
+Usage: bin
+------
+
+For file `~/uptime.rb`:
+
+    add :uptime, lambda { puts 'uptime' }
+
+    before :uptime, :run do
+      puts "starting uptime"
+    end
+
+    after :uptime, :run do
+      puts "finished uptime"
+    end
+
+    run :uptime
+
+In your shell:
+
+    Shorty ~/uptime.rb
 
 Run Tests
 ---------
@@ -37,9 +57,4 @@ Run Tests
     bundle update
     bundle exec bacon spec/main.rb
 
-"I hate writing."
------------------------------
-
-If you know of existing software that makes the above redundant,
-please tell me. The last thing I want to do is maintain code.
 
