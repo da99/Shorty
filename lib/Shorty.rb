@@ -60,19 +60,14 @@ class Shorty
       }
     end
 
-    def run name, action = nil
+    def run name, action
 
       r = shortys[name]
       raise ArgumentError, "#{name.inspect} not found" unless r
-      action ||= :run
 
       run_hooks befores, name, action, r 
       
-      result = if r.is_a?(Proc) && action == :run
-        r.call
-      else
-        r.send action
-      end
+      result = r.send(action)
       
       run_hooks afters,  name, action, r 
 

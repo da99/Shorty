@@ -6,7 +6,7 @@ describe "Shorty DSL" do
   it "adds Shorty functionality" do
     a = nil
     add :ssh, lambda { a = :a}  
-    run :ssh
+    run :ssh, :call
     a.should == :a
   end
   

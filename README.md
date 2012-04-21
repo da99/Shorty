@@ -37,19 +37,19 @@ Usage: Ruby
 
 You can also use lambdas or a code block:
    
-    add    :start, lambda { `service ssh restart` }
-    before :start, :run, lambda { puts 're-starting ssh' }
-    after  :start, :run, lambda { puts 'finished re-starting ssh' }
-
-    add    :stop do 
+    add :start, lambda { `service ssh restart` }
+    
+    add :stop do 
       `service ssh stop`
     end
 
-    run :start
+    before :start, :call, lambda { puts 're-starting ssh' }
     
-    # equivalent to...
-    run :start, :run
-    
+    after  :stop, :call do
+      puts 'ssh stopped'
+    end
+
+    run :start, :call
     # --> "lambda { `service ssh restart` }.call" is called.
 
 Shorty is implemented [in just one file](https://github.com/da99/Shorty/blob/master/lib/Shorty.rb)

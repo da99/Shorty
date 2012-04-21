@@ -48,14 +48,33 @@ describe "Shorty :run" do
     @s.add :my_box, My_Box
   }
   
-  it "sets default action to :run" do
-    @s.run(:my_box)
-    .should == "My_Box run"
-  end
-
   it "runs target action" do
     @s.run(:my_box, :custom)
     .should == "My_Box custom"
+  end
+  
+  it "runs before hooks" do
+    s = Shorty.new
+    t = []
+    s.add :test, lambda { t << :t }
+    s.before :test, :call do
+      t << :b
+    end
+
+    s.run :test, :call
+    t.should == [:b, :t]
+  end
+  
+  it "runs after hooks" do
+    s = Shorty.new
+    t = []
+    s.add :test, lambda { t << :t }
+    s.after :test, :call do
+      t << :a
+    end
+
+    s.run :test, :call
+    t.should == [:t, :a]
   end
   
 end # === Shorty run
@@ -63,27 +82,15 @@ end # === Shorty run
 
 describe "Shorty before" do
   
-  it "runs before hooks before run" do
-    s = Shorty.new
-    t = []
-    s.add :test, lambda { t << :t }
-    s.before :test, :run do
-      t << :b
-    end
-
-    s.run :test
-    t.should == [:b, :t]
-  end
-  
   it "accepts a block" do
     s = Shorty.new
     t = []
     s.add :test, lambda { t << :t }
-    s.before :test, :run do
+    s.before :test, :call do
       t << :b
     end
 
-    s.run :test
+    s.run :test, :call
     t.should == [:b, :t]
   end
 
@@ -91,11 +98,11 @@ describe "Shorty before" do
     s = Shorty.new
     t = []
     s.add :test, lambda { t << :t }
-    s.before :test, :run, lambda {
+    s.before :test, :call, lambda {
       t << :b
     }
 
-    s.run :test
+    s.run :test, :call
     t.should == [:b, :t]
   end
   
@@ -104,7 +111,7 @@ describe "Shorty before" do
     s.add :test, lambda {}
     lambda {
       l = lambda {}
-      s.before(:test, :run, l) {}
+      s.before(:test, :call, l) {}
     }.should.raise(ArgumentError)
     .message.should.match %r!lambda and block both given!
   end
@@ -114,27 +121,15 @@ end # === Shorty before
 
 describe "Shorty after" do
   
-  it "runs after hooks after run" do
-    s = Shorty.new
-    t = []
-    s.add :test, lambda { t << :t }
-    s.after :test, :run do
-      t << :a
-    end
-
-    s.run :test
-    t.should == [:t, :a]
-  end
-  
   it "accepts a block" do
     s = Shorty.new
     t = []
     s.add :test, lambda { t << :t }
-    s.after :test, :run do
+    s.after :test, :call do
       t << :a
     end
 
-    s.run :test
+    s.run :test, :call
     t.should == [:t, :a]
   end
 
@@ -142,11 +137,11 @@ describe "Shorty after" do
     s = Shorty.new
     t = []
     s.add :test, lambda { t << :t }
-    s.after :test, :run, lambda {
+    s.after :test, :call, lambda {
       t << :a
     }
 
-    s.run :test
+    s.run :test, :call
     t.should == [:t, :a]
   end
   
@@ -155,7 +150,7 @@ describe "Shorty after" do
     s.add :test, lambda {}
     lambda {
       l = lambda {}
-      s.after(:test, :run, l) {}
+      s.after(:test, :call, l) {}
     }.should.raise(ArgumentError)
     .message.should.match %r!lambda and block both given!
   end
