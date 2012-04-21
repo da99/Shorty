@@ -16,7 +16,12 @@ Usage: Ruby
     
     include Shorty::DSL
 
-    add :ssh, My_SSH_Commands.new
+    class My_SSH
+      def self.restart
+      end
+    end
+    
+    add :ssh, My_SSH
     
     before :ssh, :restart do
       puts "restarting SSH"
@@ -26,12 +31,30 @@ Usage: Ruby
       puts "SSH has been restarted"
     end
 
-    run :ssh, :restart
+    run :ssh, :restart 
+    
+    # --> My_SSH.restart is run with before/after hooks.
 
-Usage: bin
+You can also use lambdas instead of regular objects/classes:
+   
+    add    :ssh, lambda { `service ssh restart` }
+    before :ssh, :run, lambda { puts 're-starting ssh' }
+    after  :ssh, :run, lambda { puts 'finished re-starting ssh' }
+
+    run :ssh  
+    
+    # equivalent to...
+    run :ssh, :run
+    
+    # --> "lambda { `service ssh restart` }.call" is called.
+
+Shorty is implemented [in just one file](https://github.com/da99/Shorty/blob/master/lib/Shorty.rb)
+in case you have any more questions.
+
+Usage: Shorty (executable)
 ------
 
-For file `~/uptime.rb`:
+Write a Ruby file, `~/uptime.rb`, that uses the Shorty DSL:
 
     add :uptime, lambda { puts 'uptime' }
 
