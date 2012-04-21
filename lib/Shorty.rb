@@ -27,14 +27,19 @@ class Shorty
       shortys[name] = val
     end
 
-    def before name, action, &blok
-      befores[[name, action]] ||= []
-      befores[[name, action]] << blok
+    def before *args, &blok
+      add_hook :before, *args, &blok
     end
 
-    def after name, action, &blok
-      afters[[name, action]] ||= []
-      afters[[name, action]] << blok
+    def after *args, &blok
+      add_hook :after, *args, &blok
+    end
+
+    def add_hook type, name, action, l = nil, &blok
+      raise ArgumentError, "lambda and block both given" if l && blok
+      list = (type == :before ? befores : afters )
+      list[[name, action]] ||= []
+      list[[name, action]] << (l || blok)
     end
 
     def run_hooks group, name, action, package

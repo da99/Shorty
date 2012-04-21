@@ -47,6 +47,28 @@ describe "Shorty before" do
     t.should == [:b, :t]
   end
 
+  it "accepts a lambda instead of a block" do
+    s = Shorty.new
+    t = []
+    s.add :test, lambda { t << :t }
+    s.before :test, :run, lambda {
+      t << :b
+    }
+
+    s.run :test
+    t.should == [:b, :t]
+  end
+  
+  it "raises ArgumentError if both a lambda and a block are given" do
+    s = Shorty.new
+    s.add :test, lambda {}
+    lambda {
+      l = lambda {}
+      s.before(:test, :run, l) {}
+    }.should.raise(ArgumentError)
+    .message.should.match %r!lambda and block both given!
+  end
+
 end # === Shorty before
 
 
@@ -62,6 +84,28 @@ describe "Shorty after" do
 
     s.run :test
     t.should == [:t, :a]
+  end
+
+  it "accepts a lambda instead of a block" do
+    s = Shorty.new
+    t = []
+    s.add :test, lambda { t << :t }
+    s.after :test, :run, lambda {
+      t << :a
+    }
+
+    s.run :test
+    t.should == [:t, :a]
+  end
+  
+  it "raises ArgumentError if both a lambda and a block are given" do
+    s = Shorty.new
+    s.add :test, lambda {}
+    lambda {
+      l = lambda {}
+      s.after(:test, :run, l) {}
+    }.should.raise(ArgumentError)
+    .message.should.match %r!lambda and block both given!
   end
 
 end # === Shorty after

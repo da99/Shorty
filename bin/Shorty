@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+# -*- ruby -*-
+# 
+
+
+require "Shorty"
+
+include Shorty::DSL
+
+files = ARGV.map { |str| File.expand_path(str) }.uniq
+
+files.each { |file|
+  require file
+}
