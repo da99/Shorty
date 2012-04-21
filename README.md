@@ -97,7 +97,7 @@ In a separate file, `My_SSH.rb`:
     require "ohai"
 
     O = Ohai::System.new
-    O.all_plugins
+    O.require_plugin "linux/platform"
     
     class My_SSH
       class << self
