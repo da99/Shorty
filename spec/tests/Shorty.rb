@@ -13,7 +13,35 @@ module My_Box
   end # === class
 end # === My_Box
 
-describe "Shorty run" do
+describe "Shorty :add" do
+  
+  it "raises ArgumentError if both lambda and block are given" do
+    lambda {
+      s = Shorty.new
+      l = lambda {}
+      s.add :my_box, l do
+      end
+    }.should.raise(ArgumentError)
+    .message.should.match %r!lambda and block both given!
+  end
+
+  it "accepts a block as a value" do
+    p = Proc.new {}
+    s = Shorty.new
+    s.add :my_box, &p
+    s.shortys[:my_box].should == p
+  end
+
+  it "accepts a lambda as a value" do
+    l = lambda {}
+    s = Shorty.new
+    s.add :my_box, l
+    s.shortys[:my_box].should == l
+  end
+
+end # === Shorty :add
+
+describe "Shorty :run" do
   
   before { 
     @s = Shorty.new
@@ -36,6 +64,18 @@ end # === Shorty run
 describe "Shorty before" do
   
   it "runs before hooks before run" do
+    s = Shorty.new
+    t = []
+    s.add :test, lambda { t << :t }
+    s.before :test, :run do
+      t << :b
+    end
+
+    s.run :test
+    t.should == [:b, :t]
+  end
+  
+  it "accepts a block" do
     s = Shorty.new
     t = []
     s.add :test, lambda { t << :t }
@@ -75,6 +115,18 @@ end # === Shorty before
 describe "Shorty after" do
   
   it "runs after hooks after run" do
+    s = Shorty.new
+    t = []
+    s.add :test, lambda { t << :t }
+    s.after :test, :run do
+      t << :a
+    end
+
+    s.run :test
+    t.should == [:t, :a]
+  end
+  
+  it "accepts a block" do
     s = Shorty.new
     t = []
     s.add :test, lambda { t << :t }

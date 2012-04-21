@@ -16,14 +16,21 @@ class Shorty
       @afters ||= Hash[]
     end
 
-    def add name, val = :_NONE_
-      if name.is_a?(String) && val == :_NONE_
+    def add name, val = :_NONE_, &blok
+      if name.is_a?(String) && val == :_NONE_ && !blok
         file = File.expand_path(name)
         (file = "#{file}.rb") unless File.exists?(file)
         eval File.read(file), nil, file, 1
         return true
       end
+      
       raise ArgumentError, "#{name.inspect} already set" if shortys[name]
+      raise ArgumentError, "lambda and block both given" if val.is_a?(Proc) && block_given?
+      
+      if val == :_NONE_ && blok
+        val = blok
+      end
+
       shortys[name] = val
     end
 
