@@ -35,16 +35,20 @@ Usage: Ruby
     
     # --> My_SSH.restart is run with before/after hooks.
 
-You can also use lambdas instead of regular objects/classes:
+You can also use lambdas or a code block:
    
-    add    :ssh, lambda { `service ssh restart` }
-    before :ssh, :run, lambda { puts 're-starting ssh' }
-    after  :ssh, :run, lambda { puts 'finished re-starting ssh' }
+    add    :start, lambda { `service ssh restart` }
+    before :start, :run, lambda { puts 're-starting ssh' }
+    after  :start, :run, lambda { puts 'finished re-starting ssh' }
 
-    run :ssh  
+    add    :stop do 
+      `service ssh stop`
+    end
+
+    run :start
     
     # equivalent to...
-    run :ssh, :run
+    run :start, :run
     
     # --> "lambda { `service ssh restart` }.call" is called.
 
