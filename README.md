@@ -76,6 +76,58 @@ In your shell:
 
     Shorty ~/uptime.rb
 
+Usage: Best Practices
+-----
+
+You are not allowed to pass arguments to :run calls:
+
+    # Not possible:
+    run :ssh, :restart, "my arg"
+
+This is intentional. You want to put all logic in a separate class/object.
+For example, let's say you use a different command for SSH start and restart
+depending on the OS. In your Ruby file, you put:
+
+    require "./My_SSH"
+    add :ssh, My_SSH
+    run :ssh, :start
+
+In a separate file, `My_SSH.rb`:
+
+    require "ohai"
+
+    O = Ohai::System.new
+    O.all_plugins
+    
+    class My_SSH
+      class << self
+      
+        def start
+          case O[:platform]
+          when "ubuntu"
+            "service ssh start"
+          when ...
+            ....
+          end
+        end
+        
+      end
+    end
+
+If :run allowed arguments, you would be very tempted to 
+write Shorty/Ruby code with lots of mixed in logic:
+
+    if O[:platform] == 'ubuntu'
+      run :ssh, :restart, "sudo service ssh restart"
+    else
+      run :ssh, :restart, "some_program sshd start -now"
+    end
+
+In summary: 
+
+* Write short lines of Shorty/Ruby code.
+* Hide complicated logic in separate Ruby classes and objects.
+
 Run Tests
 ---------
 
