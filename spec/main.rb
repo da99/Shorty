@@ -3,7 +3,7 @@ require File.expand_path('spec/helper')
 require 'Shorty'
 require 'Bacon_Colored'
 require 'pry'
-require 'Exit_Zero'
+require 'Exit_0'
 
 
 # ======== Include the tests.
